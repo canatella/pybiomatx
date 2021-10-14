@@ -1,0 +1,18 @@
+# Changes here will be overwritten by Copier
+_commit: 0.3.1
+_src_path: gh:pdm-project/copier-pdm
+author_email: dam@cosinux.org
+author_fullname: Damien Merenne
+author_username: canatella
+build_doc: false
+copyright_date: '2021'
+copyright_holder: Damien Merenne
+copyright_holder_email: dam@cosinux.org
+copyright_license: MIT
+project_description: Python API for managing the Biomatx home automation system
+project_name: pybiomatx
+python_package_distribution_name: biomatx
+python_package_import_name: biomatx
+python_package_requires_python: '>=3.9'
+repository_name: pybiomatx
+repository_namespace: canatella
