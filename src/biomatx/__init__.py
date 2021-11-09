@@ -149,7 +149,7 @@ class Relay:
         self.on = not self.on
 
     async def force_toggle(self):
-        """When the computed state is different from the physical state, force the other state."""
+        """Toggle the state is memory without changing physical state."""
         self.on = not self.on
 
     def __repr__(self):
