@@ -1,10 +1,12 @@
 import asyncio
+import logging
 import os
-
 import pytest
 
 import biomatx
 from biomatx import Bus, Packet
+
+logging.getLogger("biomatx").setLevel(logging.DEBUG)
 
 
 class SerialMock:
@@ -64,6 +66,14 @@ def test_packet():
     assert pkt.pressed
     assert bytes(pkt) == b"\x51\x17"
     assert pkt == Packet.from_bytes(b"\x51\x17")
+
+
+def test_bus_model():
+    bus = Bus(2)
+    assert len(bus.modules) == 2
+    assert bus.scenarios.address == 7
+    assert len(bus.relays) == 20
+    assert len(bus.switches) == 20
 
 
 @pytest.mark.asyncio

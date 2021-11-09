@@ -22,6 +22,8 @@ __all__: List[str] = [
 
 _LOGGER = logging.getLogger(__name__)
 
+SCENARIO_MODULE_ADDRESS = 7
+
 
 @dataclass(frozen=True)
 class Packet:
@@ -195,16 +197,43 @@ class Bus:
     """
 
     def __init__(self, module_count: int):
-        self.modules = {}
+        self.running = False
+        self._modules = {}
+        self._stopped = None
+
         for i in range(0, 8):
-            if i < module_count or i == 7:
-                self.modules[i] = Module(self, i)
+            if i < module_count or i == SCENARIO_MODULE_ADDRESS:
+                self._modules[i] = Module(self, i)
+
+    @property
+    def modules(self):
+        return [
+            module
+            for module in self._modules.values()
+            if module.address != SCENARIO_MODULE_ADDRESS
+        ]
+
+    @property
+    def scenarios(self):
+        return self._modules[SCENARIO_MODULE_ADDRESS]
 
     def switch(self, module: int, address: int):
         return self.modules[module].switches[address]
 
     def relay(self, module: int, address: int):
         return self.modules[module].relays[address]
+
+    @property
+    def relays(self):
+        """Return all available relays."""
+        all_relays = [module.relays for module in self.modules]
+        return [relay for relays in all_relays for relay in relays]
+
+    @property
+    def switches(self):
+        """Return all available switches."""
+        all_switches = [module.switches for module in self.modules]
+        return [switch for switches in all_switches for switch in switches]
 
     async def connect(
         self,
