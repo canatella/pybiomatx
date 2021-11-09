@@ -172,5 +172,11 @@ async def test_relay_force_toggle(serial_mock, bus):
 def test_bus_loop(event_loop, serial_mock, bus):
     """Check the bus loop"""
     coro = bus.loop()
-    event_loop.call_later(0.001, lambda: bus.stop())
+
+    async def stop():
+        await asyncio.sleep(0.001)
+        await bus.stop()
+
+    event_loop.create_task(stop())
+
     event_loop.run_until_complete(coro)

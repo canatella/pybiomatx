@@ -247,6 +247,7 @@ class Bus:
 
         if loop is None:
             loop = asyncio.get_event_loop()
+        self._loop = loop
         self._callback = callback
 
         _LOGGER.debug("connecting to %s", port)
@@ -264,13 +265,14 @@ class Bus:
 
     async def loop(self):
         """Process packets in a loop, keeping the device models state up to date."""
+        self._stopped = self._loop.create_future()
         self.running = True
         _LOGGER.info("bus monitoring started")
         while self.running:
             _LOGGER.debug("waiting for next packet")
             await self.process_packet()
         _LOGGER.info("bus monitoring stopped")
-        self.running = False
+        self._stopped.set_result(None)
 
     async def send_packet(self, packet: Packet):
         self._writer.write(bytes(packet))
@@ -300,7 +302,14 @@ class Bus:
             tasks.append(self._trigger_callback(relay))
         return tasks
 
-    def stop(self):
+    async def stop(self):
+        if not self.running:
+            _LOGGER.warning("trying to stop non running bus")
+            return
+
         _LOGGER.info("stopping bus monitoring")
         self.running = False
         self._writer.close()
+        await self._stopped
+        self._stopped = None
+        self._loop = None
