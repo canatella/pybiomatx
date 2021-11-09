@@ -67,7 +67,7 @@ class Switch:
     def __init__(self, module: Module, address: int):
         self.address = address
         self.module = module
-        self.released = False
+        self.released = True
 
     @property
     def bus(self):
