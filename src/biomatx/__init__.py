@@ -99,6 +99,10 @@ class Switch:
         self.released = True
         await self.bus.send_packet(self._packet())
 
+    async def activate(self):
+        await self.press()
+        await self.release()
+
     def __repr__(self):
         return "<{}.{} module={} address={}>".format(
             self.__class__.__module__,
@@ -144,8 +148,7 @@ class Relay:
             "on" if self.on else "off",
             "off" if self.on else "on",
         )
-        await self.switch.press()
-        await self.switch.release()
+        await self.switch.activate()
         self.on = not self.on
 
     async def force_toggle(self):
