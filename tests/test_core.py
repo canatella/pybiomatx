@@ -74,7 +74,7 @@ def test_bus_model():
     assert len(bus.modules) == 2
     assert bus.scenarios.address == 7
     assert len(bus.relays) == 20
-    assert len(bus.switches) == 20
+    assert len(bus.switches) == 30
     assert repr(bus.relays[0]) == "<biomatx.Relay module=0 address=0 on=False>"
     assert repr(bus.switches[0]) == "<biomatx.Switch module=0 address=0 pressed=False>"
 
@@ -112,7 +112,7 @@ async def test_bus_process_release(serial_mock, bus):
     tasks, _ = await gather(bus.process_packet(), serial_mock.send(1, 2, True))
     await gather(*tasks)
     assert len(bus.events) == 2
-    switch, relay = bus.events
+    relay, switch = bus.events
     assert isinstance(switch, biomatx.Switch)
     assert switch.module.address == 1
     assert switch.address == 2

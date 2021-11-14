@@ -178,7 +178,8 @@ class Module:
         self.address = address
         self.bus = bus
         self.switches = [Switch(self, i) for i in range(0, 10)]
-        self.relays = [Relay(i) for i in self.switches]
+        if self.address != SCENARIO_MODULE_ADDRESS:
+            self.relays = [Relay(i) for i in self.switches]
 
     def _packet(self, switch: int, released: bool):
         return Packet(self.address, switch, released)
@@ -208,6 +209,7 @@ class Bus:
 
         for i in range(0, 8):
             if i < module_count or i == SCENARIO_MODULE_ADDRESS:
+                _LOGGER.debug(f"initializing module {i}")
                 self._modules[i] = Module(self, i)
 
     @property
@@ -223,10 +225,10 @@ class Bus:
         return self._modules[SCENARIO_MODULE_ADDRESS]
 
     def switch(self, module: int, address: int):
-        return self.modules[module].switches[address]
+        return self._modules[module].switches[address]
 
     def relay(self, module: int, address: int):
-        return self.modules[module].relays[address]
+        return self._modules[module].relays[address]
 
     @property
     def relays(self):
@@ -237,7 +239,7 @@ class Bus:
     @property
     def switches(self):
         """Return all available switches."""
-        all_switches = [module.switches for module in self.modules]
+        all_switches = [module.switches for module in self._modules.values()]
         return [switch for switches in all_switches for switch in switches]
 
     async def connect(
@@ -298,14 +300,16 @@ class Bus:
         except asyncio.IncompleteReadError:
             return []
 
-        relay = self.relay(packet.module, packet.switch)
-        switch = self.switch(packet.module, packet.switch)
+        _LOGGER.debug(f"received {packet}")
         tasks = []
+        if packet.module != SCENARIO_MODULE_ADDRESS:
+            relay = self.relay(packet.module, packet.switch)
+            if relay._process(packet):
+                tasks.append(self._trigger_callback(relay))
+        switch = self.switch(packet.module, packet.switch)
         if switch._process(packet):
             tasks.append(self._trigger_callback(switch))
-        if relay._process(packet):
-            tasks.append(self._trigger_callback(relay))
-        return tasks
+        return asyncio.gather(*tasks)
 
     async def stop(self):
         if not self.running:
