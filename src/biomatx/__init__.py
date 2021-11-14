@@ -152,7 +152,7 @@ class Relay:
         await self.switch.activate()
         self.on = not self.on
 
-    async def force_toggle(self):
+    def force_toggle(self):
         """Toggle the state is memory without changing physical state."""
         self.on = not self.on
 

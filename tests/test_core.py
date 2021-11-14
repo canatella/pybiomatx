@@ -161,14 +161,13 @@ async def test_relay_toggle(serial_mock, bus):
     assert relay.off
 
 
-@pytest.mark.asyncio
-async def test_relay_force_toggle(serial_mock, bus):
+def test_relay_force_toggle(serial_mock, bus):
     """Check that relays can be force toggled"""
     relay = bus.relay(1, 3)
     assert relay.off
-    await relay.force_toggle()
+    relay.force_toggle()
     assert relay.on
-    await relay.force_toggle()
+    relay.force_toggle()
     assert relay.off
 
 
