@@ -104,11 +104,12 @@ class Switch:
         await self.release()
 
     def __repr__(self):
-        return "<{}.{} module={} address={}>".format(
+        return "<{}.{} module={} address={} pressed={}>".format(
             self.__class__.__module__,
-            self.__class__.__name,
+            self.__class__.__name__,
             self.module.address,
             self.address,
+            self.pressed,
         )
 
     def __str__(self):
@@ -156,11 +157,12 @@ class Relay:
         self.on = not self.on
 
     def __repr__(self):
-        return "<{}.{} module={} address={}>".format(
+        return "<{}.{} module={} address={} on={}>".format(
             self.__class__.__module__,
-            self.__class__.__name,
+            self.__class__.__name__,
             self.module.address,
             self.address,
+            self.on,
         )
 
     def __str__(self):

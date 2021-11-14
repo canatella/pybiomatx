@@ -75,6 +75,8 @@ def test_bus_model():
     assert bus.scenarios.address == 7
     assert len(bus.relays) == 20
     assert len(bus.switches) == 20
+    assert repr(bus.relays[0]) == "<biomatx.Relay module=0 address=0 on=False>"
+    assert repr(bus.switches[0]) == "<biomatx.Switch module=0 address=0 pressed=False>"
 
 
 @pytest.mark.asyncio
