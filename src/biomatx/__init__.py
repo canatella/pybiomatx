@@ -277,7 +277,10 @@ class Bus:
         _LOGGER.info("bus monitoring started")
         while self.running:
             _LOGGER.debug("waiting for next packet")
-            await self.process_packet()
+            try:
+                await self.process_packet()
+            except Exception as e:
+                _LOGGER.exception("error while processing packet")
         _LOGGER.info("bus monitoring stopped")
         self._stopped.set_result(None)
 
