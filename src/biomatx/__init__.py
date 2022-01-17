@@ -301,6 +301,15 @@ class Bus:
             return []
 
         _LOGGER.debug(f"received {packet}")
+
+        if not packet.module in self._modules:
+            _LOGGER.error(f"unregistered module for {packet}")
+            return []
+
+        if packet.switch >= 10:
+            _LOGGER.error(f"invalid relay for {packet}")
+            return []
+
         tasks = []
         if packet.module != SCENARIO_MODULE_ADDRESS:
             relay = self.relay(packet.module, packet.switch)
