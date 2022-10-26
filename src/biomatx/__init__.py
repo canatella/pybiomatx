@@ -202,7 +202,7 @@ class Bus:
 
     """
 
-    def __init__(self, module_count: int):
+    def __init__(self, module_count: int, sleep: float = 0.5):
         self.running = False
         self._modules = {}
         self._stopped = None
@@ -288,7 +288,7 @@ class Bus:
         self._writer.write(bytes(packet))
         await self._writer.drain()
         # Leave time for the system to process
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.2)
 
     async def read_packet(self) -> Packet:
         data = await self._reader.readexactly(2)
