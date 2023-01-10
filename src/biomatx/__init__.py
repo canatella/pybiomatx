@@ -293,7 +293,7 @@ class Bus:
     async def read_packet(self) -> Packet:
         while True:
             data = await self._reader.readexactly(1)
-            if (data[0] & 0b11111000) == 0b01010000:
+            if (data[0] & 0b11110000) in (0b01010000, 0b10100000) :
                 break
             _LOGGER.warning(f"dropping invalid start byte {data}")
         data +=  await self._reader.readexactly(1)

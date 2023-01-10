@@ -101,6 +101,9 @@ async def test_bus_read_invalid(serial_mock, bus):
     packet, _ = await gather(bus.read_packet(), serial_mock.send_raw(b"\x86\x52\x20"))
     assert packet == Packet(2, 0, False)
 
+    packet, _ = await gather(bus.read_packet(), serial_mock.send_raw(b"\x86\xa2\x20"))
+    assert packet == Packet(2, 0, False)
+
 
 @pytest.mark.asyncio
 async def test_bus_process_press(serial_mock, bus):
