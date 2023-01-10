@@ -24,6 +24,12 @@ class SerialMock:
         os.close(self.master)
         os.close(self.slave)
 
+        
+    async def send_raw(self, data):
+        await asyncio.to_thread(
+            lambda: os.write(self.master, data)
+        )
+        
     async def send(self, module, switch, released):
         await asyncio.to_thread(
             lambda: os.write(self.master, bytes(Packet(module, switch, released)))
@@ -88,6 +94,12 @@ async def test_bus_read_send(serial_mock, bus):
     # Check that we can send packet
     _, packet = await gather(bus.send_packet(packet), serial_mock.read())
     assert packet == Packet(1, 2, True)
+
+@pytest.mark.asyncio
+async def test_bus_read_invalid(serial_mock, bus):
+    # Check that invalid start bytes are skipped.
+    packet, _ = await gather(bus.read_packet(), serial_mock.send_raw(b"\x86\x52\x20"))
+    assert packet == Packet(2, 0, False)
 
 
 @pytest.mark.asyncio

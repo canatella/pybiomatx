@@ -291,7 +291,13 @@ class Bus:
         await asyncio.sleep(0.2)
 
     async def read_packet(self) -> Packet:
-        data = await self._reader.readexactly(2)
+        while True:
+            data = await self._reader.readexactly(1)
+            if (data[0] & 0b11111000) == 0b01010000:
+                break
+            _LOGGER.warning(f"dropping invalid start byte {data}")
+        data +=  await self._reader.readexactly(1)
+        _LOGGER.debug(f"received packet {data}")
         return Packet.from_bytes(data)
 
     def _trigger_callback(self, device: [Switch | Relay]):
