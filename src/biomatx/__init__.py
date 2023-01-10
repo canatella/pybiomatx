@@ -30,7 +30,7 @@ class Packet:
     """A Biomatx bus packet.
 
     Biomatx bus uses 2 bytes packet where
-    [0-4] = 01010
+    [0-4] = 01010 or 10100
     [5-7] = module address
     [8]: 0 pushed / 1 released
     [9-11] = module address
@@ -135,8 +135,8 @@ class Relay:
         assert packet.module == self.module.address
         assert packet.switch == self.address
 
-        # Update state on release
-        if packet.released:
+        # Update state on pres
+        if packet.pressed:
             self.on = not self.on
             _LOGGER.debug("relay %s turned %s", self, "on" if self.on else "off")
             return True

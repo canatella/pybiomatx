@@ -108,30 +108,30 @@ async def test_bus_read_invalid(serial_mock, bus):
 @pytest.mark.asyncio
 async def test_bus_process_press(serial_mock, bus):
     """Check that the bus process press packets correctly"""
-    tasks, _ = await gather(bus.process_packet(), serial_mock.send(1, 2, False))
+    tasks, _ = await gather(bus.process_packet(), serial_mock.send(1, 2, True))
     await gather(*tasks)
     assert len(bus.events) == 1
     switch = bus.events[0]
     assert isinstance(switch, biomatx.Switch)
     assert switch.module.address == 1
     assert switch.address == 2
-    assert switch.pressed
+    assert switch.released
     relay = bus.relay(1, 2)
     assert relay.off
 
 
 @pytest.mark.asyncio
 async def test_bus_process_release(serial_mock, bus):
-    """Check that the bus process release packets correctly"""
-    # Check that we can process released packets
-    tasks, _ = await gather(bus.process_packet(), serial_mock.send(1, 2, True))
+    """Check that the bus process pressed packets correctly"""
+    # Check that we can process pressed packets
+    tasks, _ = await gather(bus.process_packet(), serial_mock.send(1, 2, False))
     await gather(*tasks)
     assert len(bus.events) == 2
     relay, switch = bus.events
     assert isinstance(switch, biomatx.Switch)
     assert switch.module.address == 1
     assert switch.address == 2
-    assert switch.released
+    assert switch.pressed
     assert isinstance(relay, biomatx.Relay)
     assert relay.module.address == 1
     assert relay.address == 2
