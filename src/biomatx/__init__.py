@@ -5,6 +5,7 @@
     :author: Damien Merenne <dam@cosinux.org>
     :license: MIT
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -279,7 +280,7 @@ class Bus:
             _LOGGER.debug("waiting for next packet")
             try:
                 await self.process_packet()
-            except Exception as e:
+            except Exception:
                 _LOGGER.exception("error while processing packet")
         _LOGGER.info("bus monitoring stopped")
         self._stopped.set_result(None)
@@ -293,10 +294,10 @@ class Bus:
     async def read_packet(self) -> Packet:
         while True:
             data = await self._reader.readexactly(1)
-            if (data[0] & 0b11110000) in (0b01010000, 0b10100000) :
+            if (data[0] & 0b11110000) in (0b01010000, 0b10100000):
                 break
             _LOGGER.warning(f"dropping invalid start byte {data}")
-        data +=  await self._reader.readexactly(1)
+        data += await self._reader.readexactly(1)
         _LOGGER.debug(f"received packet {data}")
         return Packet.from_bytes(data)
 
@@ -311,7 +312,7 @@ class Bus:
 
         _LOGGER.debug(f"received {packet}")
 
-        if not packet.module in self._modules:
+        if packet.module not in self._modules:
             _LOGGER.error(f"unregistered module for {packet}")
             return []
 
