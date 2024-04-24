@@ -1,7 +1,7 @@
 # pybiomatx
 
 [![Tests](https://github.com/canatella/pybiomatx/workflows/Tests/badge.svg)](https://github.com/canatella/pybiomatx/actions?query=workflow%3Aci)
-[![pypi version](https://img.shields.io/pypi/v/pybiomatx.svg)](https://pypi.org/project/pybiomatx/)
+[![pypi version](https://img.shields.io/pypi/v/biomatx.svg)](https://pypi.org/project/pybiomatx/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm.fming.dev)
 
